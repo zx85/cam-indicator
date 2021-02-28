@@ -12,8 +12,9 @@ def setdb():
     state= request.args.get('state',1)
     StatesDB=States.query.filter_by(Indicator=device).first()
     StatesDB.State=int(state)
+    db.session.commit()
     StatesDB=States.query.filter_by(Indicator=device).first()
-    return StatesDB.Indicator+" is: "+StatesDB.State
+    return StatesDB.Indicator+" is: "+str(StatesDB.State)
 
 # Reserved for cameras - returns the audio & appropriate camera state comma separated
 # cam,audio
@@ -31,5 +32,5 @@ def getalldb():
     StatesDB=States.query.all()
     StatesOutput=""
     for eachIndicator in StatesDB:
-        StatesOutput=StatesOutput+StatesDB.Indicator+","+str(StatesDB.State)+"|"
-    return presetOutput
+        StatesOutput=StatesOutput+eachIndicator.Indicator+","+str(eachIndicator.State)+"|"
+    return StatesOutput

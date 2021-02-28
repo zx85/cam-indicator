@@ -3,7 +3,6 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 
-
 # Do setup in case it's needed
 dbFilename = "indicator.db"
 sqliteString="sqlite:///"+dbFilename
@@ -14,21 +13,24 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 class States(db.Model):
-        Indicator = db.Column(db.String(20), unique=True, primary_key=True)
-        State = db.Column(db.Integer, nullable=False)
+    Indicator = db.Column(db.String(20), unique=True, primary_key=True)
+    State = db.Column(db.Integer, nullable=False)
 
-        def __repr__(self):
-            return ("Presets("+str(self.id)+", '"+str(self.Label)+"')")
-
+# custom trigger DDL
+    trigger = DDL('''\
+    CREATE TRIGGER States BEFORE INSERT OR UPDATE
+        update States set State=0 where Indicator like 'cam%'
+    ''')
+    event.listen(States, 'before_insert', trigger)
 
 
 # if the DB isn't there create it
 if not os.path.isfile("cam_indicator/"+dbFilename) :
     print ("Creating DB")
     db.create_all()
-    db.session.add(States(Indicator="Audio",State=0))
+    db.session.add(States(Indicator="audio",State=0))
     for eachCam in range(1, 6):
-        db.session.add(States(Indicator="Cam"+str(eachCam),State=0))
+        db.session.add(States(Indicator="cam"+str(eachCam),State=0))
     db.session.commit()
 
 from cam_indicator import routes
