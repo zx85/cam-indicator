@@ -24,7 +24,7 @@ if not os.path.isfile("cam_indicator/"+dbFilename) :
     print ("Creating DB")
     db.create_all()
     db.session.add(States(Indicator="audio",State=0))
-    for eachCam in range(1, 6):
+    for eachCam in range(1, 10):
         db.session.add(States(Indicator="cam"+str(eachCam),State=0))
     db.session.commit()
 
