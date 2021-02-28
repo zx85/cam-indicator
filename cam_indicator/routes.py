@@ -1,6 +1,5 @@
 from flask import render_template, url_for, flash, redirect, request
-from camctrl import app,db,States
-import camcmds
+from cam_indicator import app,db,States
 
 @app.route("/")
 @app.route("/home")
@@ -29,7 +28,7 @@ def getdb(cam):
 
 @app.route("/getall")
 def getalldb():
-    StatesDB=States.query.all())
+    StatesDB=States.query.all()
     StatesOutput=""
     for eachIndicator in StatesDB:
         StatesOutput=StatesOutput+StatesDB.Indicator+","+str(StatesDB.State)+"|"
