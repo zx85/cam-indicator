@@ -26,9 +26,9 @@ class States(db.Model):
 if not os.path.isfile("cam_indicator/"+dbFilename) :
     print ("Creating DB")
     db.create_all()
-    db.session.add(States(Indicator="Audio",State=0)
+    db.session.add(States(Indicator="Audio",State=0))
     for eachCam in range(1, 6):
-        db.session.add(States(Indicator="Cam"+str(eachCam),State=0)
+        db.session.add(States(Indicator="Cam"+str(eachCam),State=0))
     db.session.commit()
 
-from camctrl import routes
+from cam_indicator import routes
