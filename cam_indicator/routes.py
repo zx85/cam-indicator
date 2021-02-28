@@ -14,7 +14,6 @@ def setdb():
     if state=="1" and "cam" in device:
         ZeroCandidates=States.query.filter(States.Indicator.like('cam%')).all()
         for eachIndicator in ZeroCandidates:
-            print (eachIndicator.Indicator)
             eachIndicator.State=0
 # Then update the new one
     StatesDB=States.query.filter_by(Indicator=device).first()
