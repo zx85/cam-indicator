@@ -1,6 +1,6 @@
 from flask import Flask
 import os
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy,event
 from sqlalchemy import create_engine
 
 # Do setup in case it's needed
@@ -16,13 +16,8 @@ class States(db.Model):
     Indicator = db.Column(db.String(20), unique=True, primary_key=True)
     State = db.Column(db.Integer, nullable=False)
 
-# custom trigger DDL
-    trigger = DDL('''\
-    CREATE TRIGGER States BEFORE INSERT OR UPDATE
-        update States set State=0 where Indicator like 'cam%'
-    ''')
-    event.listen(States, 'before_insert', trigger)
-
+    def __repr__(self):
+        return ("Presets("+str(self.id)+", '"+str(self.Label)+"')")
 
 # if the DB isn't there create it
 if not os.path.isfile("cam_indicator/"+dbFilename) :
