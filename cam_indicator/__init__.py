@@ -23,7 +23,7 @@ class States(db.Model):
 
 
 # if the DB isn't there create it
-if not os.path.isfile("camctrl/"+dbFilename) :
+if not os.path.isfile("cam_indicator/"+dbFilename) :
     print ("Creating DB")
     db.create_all()
     db.session.add(States(Indicator="Audio",State=0)
