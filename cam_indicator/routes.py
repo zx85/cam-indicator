@@ -9,12 +9,15 @@ def home():
 @app.route("/set")
 def setdb():
     device= request.args.get('device', 'audio')
-    state= request.args.get('state',1)
+    state= request.args.get('state','1')
 # Clear down the current ones
     if state=="1" and "cam" in device:
         ZeroCandidates=States.query.filter(States.Indicator.like('cam%')).all()
         for eachIndicator in ZeroCandidates:
             eachIndicator.State=0
+# Super shim because if cameras are on, audio is on
+        StatesDB=States.query.filter_by(Indicator='audio').first()
+        StatesDB.State=1
 # Then update the new one
     StatesDB=States.query.filter_by(Indicator=device).first()
     StatesDB.State=int(state)
@@ -40,3 +43,12 @@ def getalldb():
     for eachIndicator in StatesDB:
         StatesOutput=StatesOutput+eachIndicator.Indicator+","+str(eachIndicator.State)+"|"
     return StatesOutput
+
+@app.route("/clearall")
+def clearalldb():
+# Clear down evryfin
+    StatesDB=States.query.all()
+    for eachIndicator in StatesDB:
+        eachIndicator.State=0
+    db.session.commit()
+    return getalldb()
