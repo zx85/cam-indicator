@@ -19,11 +19,16 @@ def setdb():
         StatesDB=States.query.filter_by(Indicator='audio').first()
         StatesDB.State=1
 # Then update the new one
-    StatesDB=States.query.filter_by(Indicator=device).first()
-    StatesDB.State=int(state)
+    for eachDevice in (device.split(",")):
+        print(eachDevice)
+        StatesDB=States.query.filter_by(Indicator=eachDevice).first()
+        StatesDB.State=int(state)
     db.session.commit()
-    StatesDB=States.query.filter_by(Indicator=device).first()
-    return StatesDB.Indicator+" is: "+str(StatesDB.State)
+    thisReturn=""
+    for eachDevice in (device.split(",")):
+        StatesDB=States.query.filter_by(Indicator=eachDevice).first()
+        thisReturn=thisReturn+StatesDB.Indicator+"="+str(StatesDB.State)+"|"
+    return thisReturn
 
 # Reserved for cameras - returns the audio & appropriate camera state comma separated
 # cam,audio
