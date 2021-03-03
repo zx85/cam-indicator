@@ -10,8 +10,9 @@ def home():
 def setdb():
     device= request.args.get('device', 'audio')
     state= request.args.get('state','1')
-# Clear down the current ones
-    if state=="1" and "cam" in device:
+    clear=request.args.get('clear','1')
+# Clear down the current ones unless told not to
+    if clear=='1':
         ZeroCandidates=States.query.filter(States.Indicator.like('cam%')).all()
         for eachIndicator in ZeroCandidates:
             eachIndicator.State=0
