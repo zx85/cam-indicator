@@ -6,8 +6,32 @@ from cam_indicator import app,db,States
 def home():
     return render_template('home.html')
 
-@app.route("/set")
-def setdb():
+@app.route("/set/<device>")
+def setdb(device):
+    state= request.args.get('state','1')
+# Clear down the current ones
+    ZeroCandidates=States.query.filter(States.Indicator.like('cam%')).all()
+    for eachIndicator in ZeroCandidates:
+        eachIndicator.State=0
+# Super shim because if cameras are on, audio is on
+        StatesDB=States.query.filter_by(Indicator='audio').first()
+        StatesDB.State=1
+# Then update the new one
+    for eachDevice in (device.split(",")):
+        thisDevice='cam'+eachDevice
+        StatesDB=States.query.filter_by(Indicator=thisDevice).first()
+        StatesDB.State=int(state)
+    db.session.commit()
+    thisReturn=""
+    for eachDevice in (device.split(",")):
+        thisDevice='cam'+eachDevice
+        StatesDB=States.query.filter_by(Indicator=thisDevice).first()
+        thisReturn=thisReturn+StatesDB.Indicator+"="+str(StatesDB.State)+"|"
+    return thisReturn
+
+@app.route("/setdevice")
+@app.route("/audio")
+def setdevicedb():
     device= request.args.get('device', 'audio')
     state= request.args.get('state','1')
     clear=request.args.get('clear','1')
@@ -51,6 +75,7 @@ def getalldb():
     return StatesOutput
 
 @app.route("/clearall")
+@app.route("/clear")
 def clearalldb():
 # Clear down evryfin
     StatesDB=States.query.all()
